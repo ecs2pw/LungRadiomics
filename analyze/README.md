@@ -1,5 +1,5 @@
 # Analysis Programs
-These files are used to visualize results from the extracted radiomic features. **I cannot guarantee that all of these files still work as intended.** The important ones should, but not all of them have been maintained as file structures have changed.  Below is a simple explanation of what each file *should* do, listed approximately in order of importance.
+These files are used to visualize results from the extracted radiomic features. **I cannot guarantee that all of these files still work as intended.** The important ones should, but not all of them have been maintained as file structures have changed.  Below is a simple explanation of what each file *should* do, listed approximately in order of importance.  **Note:** Many of the below files make use of time data from when each patient's scans were taken.  Since this data is not present in the images themselves it should be entered in a file Dates.csv in the `dataset` directory, with the initials of each patient at the top of each collumn and the dates in mm/dd/yy format underneath, starting from Pre,PreN1,... and working backwards.
 
 * ITV_viewer.py
   * Displays values and trendlines for radiomic features taken from the ITV and Random_ITV.  Plots are displayed with feature value on the y-axis and days before diagnosis on the x-axis, ITV plotted in blue and Random_ITV plotted in red.
