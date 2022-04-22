@@ -1,0 +1,90 @@
+﻿import pandas as pd
+import datetime as dt
+import numpy as np
+from scipy.stats import t
+
+FilePath="/nv/vol141/phys_nrf/Emery/dataset/"
+
+dates=pd.read_csv(FilePath+"Dates.csv")
+patients=list(dates.columns)
+#TODO find out why last pre_negative is missing
+#patients.remove("CT")
+patients.remove("DA")
+#Looks like some of this data might be bad
+patients.remove("BJ")
+
+d={p:[dt.datetime.strptime(i,"%m/%d/%y") for i in dates[p] 
+      if type(i)==type("")] for p in patients}
+d={p:[(d[p][0]-i).days for i in d[p]] for p in d}
+
+
+ITV={p:pd.read_csv(FilePath+p+"/ITV.csv") for p in patients}
+PTV={p:pd.read_csv(FilePath+p+"/PTV.csv") for p in patients}
+Random_ITV={p:pd.read_csv(FilePath+p+"/R_ITV.csv") for p in patients}
+Random_PTV={p:pd.read_csv(FilePath+p+"/R_PTV.csv") for p in patients}
+
+keys=[]
+for i in ITV[patients[0]].index:
+    try:
+        val=float(ITV[patients[0]]["Pre"][i])
+        keys.append(i)
+    except:
+        continue
+
+#Put data into ITVdata and RITVdata
+ITVdata={}
+RITVdata={}
+for k in keys:
+    X,y=[],[]
+    for p in patients:
+        X+=d[p]
+        add=list(ITV[p].iloc[k])[1:]
+        add=[float(i)/float(1) for i in add]
+        y+=add
+    ITVdata[k]=(X,y)
+
+    X,y=[],[]
+    for p in patients:
+        X+=d[p]
+        add=list(Random_ITV[p].iloc[k])[1:]
+        add=[float(i)/float(1) for i in add]
+        y+=add
+    RITVdata[k]=(X,y)
+    
+def slopeNotZero(data):
+    results=[]
+    for k in data:
+        X=data[k][0]
+        y=data[k][1]
+        fit=np.polyfit(X, y, 1)
+        p=np.poly1d(fit)
+
+        b1=fit[0]
+        Beta=0
+        MSE=sum([(y[point]-p(X[point]))**2 for point in range(len(X))])/len(X)
+        Xbar=sum(X)/len(X)
+        idk=sum([(x-Xbar)**2 for x in X])
+        tStar=(b1-Beta)/(MSE/idk)**0.5
+        #print(ITV[patients[0]]["Unnamed: 0"][k],tStar)
+        p=2*(1-t.cdf(abs(tStar),df=len(X)))
+        print(len(X))
+        results.append((ITV[patients[0]]["Unnamed: 0"][k], p))
+    return results
+
+
+ITVresults=slopeNotZero(ITVdata)
+RITVresults=slopeNotZero(RITVdata)
+
+combinedResults=[(ITVresults[i][0],ITVresults[i][1],RITVresults[i][1]) for i in range(len(ITVresults))]
+combinedResults.sort(key=lambda x: -x[1])
+
+df=len(X)-1
+
+for i in combinedResults:
+    print(i[0],i[1],i[2])
+import matplotlib.pyplot as plt
+plt.scatter([i[2] for i in combinedResults],[i[1] for i in combinedResults])
+plt.xlabel(r"R_ITV p ($\beta$=0)")
+plt.ylabel(r"ITV p ($\beta$=0)")
+plt.show()
+
