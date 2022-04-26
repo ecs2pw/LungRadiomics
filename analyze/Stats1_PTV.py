@@ -7,7 +7,7 @@ FilePath="/nv/vol141/phys_nrf/Emery/dataset/"
 
 dates=pd.read_csv(FilePath+"Dates.csv")
 patients=list(dates.columns)
-blacklist=["DA","MK","MJ"]
+blacklist=["DA","MK","MJ","BB"]
 for i in blacklist:
     if i in patients:
         patients.remove(i)

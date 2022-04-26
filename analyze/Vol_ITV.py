@@ -24,6 +24,10 @@ patients=list(dates.columns)
 patients.remove("DA")
 #Looks like some of this data might be bad
 patients.remove("BJ")
+#Just go with it
+patients.remove("MJ")
+patients.remove("BB")
+patients.remove("SJ")
 
 d={p:[dt.datetime.strptime(i,"%m/%d/%y") for i in dates[p] 
       if type(i)==type("")] for p in patients}
