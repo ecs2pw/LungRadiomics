@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 from matplotlib.path import Path
 
-from lymphkill.file_utils import find_prefixed_file, find_dicom_directory
+from file_utils import find_prefixed_file, find_dicom_directory
 
 '''
 Load all valid CT images for a given patient

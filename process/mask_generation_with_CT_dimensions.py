@@ -7,7 +7,7 @@ import numpy as np
 from scipy import ndimage
 
 from sys import exit
-from lymphkill.file_utils import find_prefixed_file, find_dicom_directory, implay, find_prefixed_files
+from file_utils import find_prefixed_file, find_dicom_directory, implay, find_prefixed_files
 
 # # ROI names that DC has been using for his contours
 # Aorta

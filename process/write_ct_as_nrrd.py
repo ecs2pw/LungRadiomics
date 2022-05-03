@@ -23,7 +23,7 @@ t1=threading.Thread(target=p)
 
 
 
-from lymphkill.file_utils import find_dicom_directory, find_prefixed_files
+from file_utils import find_dicom_directory, find_prefixed_files
 
 '''
 Loads a participant's 3D CT

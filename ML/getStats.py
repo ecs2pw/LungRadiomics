@@ -2,6 +2,7 @@
 import datetime as dt
 import numpy as np
 from scipy.stats import t
+import pickle
 
 FilePath="/nv/vol141/phys_nrf/Emery/dataset/"
 
@@ -105,40 +106,16 @@ print("Fitting linear models")
 ITV_fits, RITV_fits = {},{}
 PTV_fits, RPTV_fits = {},{}
 for k in ITVdata.keys():
-	ITV_fits[k] = slopeStats(ITVdata[k][0], ITVdata[k][1])
-	RITV_fits[k] = slopeStats(RITVdata[k][0], RITVdata[k][1])
-	PTV_fits[k] = slopeStats(PTVdata[k][0], PTVdata[k][1])
-	RPTV_fits[k] = slopeStats(RPTVdata[k][0], RPTVdata[k][1])
+	ITV_fits[names[k]] = slopeStats(ITVdata[k][0], ITVdata[k][1])
+	RITV_fits[names[k]] = slopeStats(RITVdata[k][0], RITVdata[k][1])
+	PTV_fits[names[k]] = slopeStats(PTVdata[k][0], PTVdata[k][1])
+	RPTV_fits[names[k]] = slopeStats(RPTVdata[k][0], RPTVdata[k][1])
+allData = {'ITV':ITV_fits, 'PTV':PTV_fits, "RITV":RITV_fits, "RPTV:":RPTV_fits}
 
-for k in ITVdata.keys():
-	print(names[k], ITV_fits[k])
+print("Saving fits")
+with open("TrendData.fit", 'wb') as file:
+	pickle.dump(allData, file)
+
 print("done.")
-exit()
 
-combinedResults=[(ITVresults[i][0],ITVresults[i][1],RITVresults[i][1]) for i in range(len(ITVresults))]
-combinedResults.sort(key=lambda x: -x[1])
-
-#df=len(X)-1
-
-for i in range(len(ITVresults)):
-	m_diff = abs(ITVresults[i][2]-RITVresults[i][2])
-	m_StD = (ITVresults[i][3]**2+RITVresults[i][3]**3)**0.5
-	print(i,2*(1-t.cdf(abs(m_diff)/m_StD,df=66)))
-
-firstOrder = [i for i in combinedResults if "firstorder" in i[0]]
-glcm = [i for i in combinedResults if "glcm" in i[0]]
-glrlm = [i for i in combinedResults if "glrlm" in i[0]]
-glszm = [i for i in combinedResults if "glszm" in i[0]]
-gldm = [i for i in combinedResults if "gldm" in i[0]]
-ngtdm = [i for i in combinedResults if "gldm" in i[0]]
-import matplotlib.pyplot as plt
-for j in [firstOrder, glcm, glrlm, glszm, gldm, ngtdm]:
-    plt.scatter([i[2] for i in j], [i[1] for i in j])
-plt.legend(["firstOrder",'glcm','glrlm','glszm','gldm','ngtdm'])
-#plt.scatter([i[2] for i in combinedResults],[i[1] for i in combinedResults])
-plt.xlabel(r"R_ITV p ($\beta$=0)")
-plt.ylabel(r"ITV p ($\beta$=0)")
-plt.title("ITV vs RITV Trend Significance")
-plt.plot([0,1],[0.05,0.05],'r')
-plt.show()
 
