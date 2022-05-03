@@ -27,7 +27,7 @@ all_masks = find_postfixed_files(mask_directory, "nrrd")
 for mask_filename in all_masks:
     # Get basename
     mask_basename = os.path.basename(mask_filename)
-    print('Proecssing ' + mask_basename)
+    print('Processing ' + mask_basename)
 
     # Read file
     mask, header = nrrd.read(mask_filename)
